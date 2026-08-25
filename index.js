@@ -1,13 +1,12 @@
 import baileys, { useMultiFileAuthState, DisconnectReason } from '@whiskeysockets/baileys';
 import OpenAI from 'openai';
-import qrcode from 'qrcode-terminal';
 import express from 'express';
 import pino from 'pino';
 
-// Resolver la función correctamente
+// Resolver correctamente la función de Baileys en ESM
 const makeWASocket = baileys.default || baileys;
 
-// 1. Servidor Express para Render
+// 1. Servidor Express (Evita que Render suspenda la app)
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -19,9 +18,9 @@ app.listen(PORT, () => {
   console.log(`[HTTP] Servidor escuchando en el puerto ${PORT}`);
 });
 
-// 2. Inicializar cliente OpenAI apuntando a tu LiteLLM Proxy
+// 2. Cliente OpenAI apuntando a tu Proxy LiteLLM
 const openai = new OpenAI({
-  baseURL: process.env.LITELLM_URL, // Ej: https://tu-proxy-litellm.onrender.com/v1
+  baseURL: process.env.LITELLM_URL, // Ej: https://tu-proxy.onrender.com/v1
   apiKey: process.env.LITELLM_MASTER_KEY || 'sk-1234'
 });
 
@@ -40,7 +39,7 @@ async function generateGeminiResponse(prompt) {
   }
 }
 
-// 3. Conexión de WhatsApp con Baileys
+// 3. Conexión a WhatsApp
 async function connectToWhatsApp() {
   const { state, saveCreds } = await useMultiFileAuthState('auth_info_baileys');
 
@@ -56,8 +55,12 @@ async function connectToWhatsApp() {
     const { connection, lastDisconnect, qr } = update;
 
     if (qr) {
-      console.log('\n--- ESCANEA ESTE CÓDIGO QR EN WHATSAPP ---');
-      qrcode.generate(qr, { small: true });
+      // Genera una URL limpia para ver el código QR en una imagen web
+      const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qr)}`;
+      console.log('\n==================================================');
+      console.log('ABRE ESTE LINK EN EL NAVEGADOR PARA ESCANEAR EL QR:');
+      console.log(qrImageUrl);
+      console.log('==================================================\n');
     }
 
     if (connection === 'close') {
@@ -67,7 +70,7 @@ async function connectToWhatsApp() {
         connectToWhatsApp();
       }
     } else if (connection === 'open') {
-      console.log('[WhatsApp] Bot conectado exitosamente.');
+      console.log('[WhatsApp] ¡Bot conectado exitosamente!');
     }
   });
 
@@ -87,4 +90,3 @@ async function connectToWhatsApp() {
 }
 
 connectToWhatsApp();
-                           

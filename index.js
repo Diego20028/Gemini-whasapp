@@ -1,8 +1,11 @@
-import makeWASocket, { useMultiFileAuthState, DisconnectReason } from '@whiskeysockets/baileys';
+import baileys, { useMultiFileAuthState, DisconnectReason } from '@whiskeysockets/baileys';
 import OpenAI from 'openai';
 import qrcode from 'qrcode-terminal';
 import express from 'express';
 import pino from 'pino';
+
+// Resolver la función correctamente
+const makeWASocket = baileys.default || baileys;
 
 // 1. Servidor Express para Render
 const app = express();
@@ -19,7 +22,7 @@ app.listen(PORT, () => {
 // 2. Inicializar cliente OpenAI apuntando a tu LiteLLM Proxy
 const openai = new OpenAI({
   baseURL: process.env.LITELLM_URL, // Ej: https://tu-proxy-litellm.onrender.com/v1
-  apiKey: process.env.LITELLM_MASTER_KEY || 'sk-1234' // Tu master key configurada en el YAML
+  apiKey: process.env.LITELLM_MASTER_KEY || 'sk-1234'
 });
 
 const TARGET_MODEL = 'gemini-3.6-flash';
@@ -84,4 +87,4 @@ async function connectToWhatsApp() {
 }
 
 connectToWhatsApp();
-    
+                           

@@ -4,11 +4,12 @@
   "description": "WhatsApp Bot usando LiteLLM Proxy en Render",
   "main": "index.js",
   "type": "module",
+  "license": "MIT",
   "scripts": {
     "start": "node index.js"
   },
   "dependencies": {
-    "@whiskeysockets/baileys": "^6.7.9",
+    "@whiskeysockets/baileys": "^6.7.22",
     "express": "^4.19.2",
     "openai": "^4.56.0",
     "pino": "^9.0.0",
@@ -18,4 +19,3 @@
     "node": ">=18.0.0"
   }
 }
-
